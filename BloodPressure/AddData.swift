@@ -151,13 +151,13 @@ struct AddData: View {
     
     func onAddDataPressed() {
         healtKitManager.authorizationRequestHealthKit { available, error in
-            guard healtKitManager.isSharingAuthorized() else {
+            guard healtKitManager.isSharingAuthorizedForAllSamples() else {
                 print("not auhtorised")
                 showingAccessDeniedAlert = true
                 return
             }
-            healtKitManager.saveBloodPressureMeasurement(date: date, systolic: systolic!, diastolic: diastolic!, heartRate: heartRate!) { comp, error in
-                if error == nil {
+            healtKitManager.save(systolic: systolic!, diastolic: diastolic!, heartRate: heartRate!, date: date) { success, error in
+                if success, error == nil {
                     systolic = nil
                     diastolic = nil
                     heartRate = nil

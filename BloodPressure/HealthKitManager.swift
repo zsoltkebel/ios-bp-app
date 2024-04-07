@@ -8,18 +8,16 @@
 import Foundation
 import HealthKit
 
+enum HKShareError: Error {
+    case sharingNotAuthorisedForAllSamples
+}
+
 class HealthKitManager {
     fileprivate let healthKitStore = HKHealthStore()
     
-    private let systolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!
-    private let diastolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!
-    private let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-    
-    func isSharingAuthorized() -> Bool {
-        let systolicStatus = healthKitStore.authorizationStatus(for: systolicType)
-        let diastolicStatus = healthKitStore.authorizationStatus(for: diastolicType)
-        let heartRateStatus = healthKitStore.authorizationStatus(for: heartRateType)
-        return systolicStatus == HKAuthorizationStatus.sharingAuthorized && diastolicStatus == HKAuthorizationStatus.sharingAuthorized && heartRateStatus == HKAuthorizationStatus.sharingAuthorized
+    func isSharingAuthorizedForAllSamples() -> Bool {
+        return healthKitStore.authorizationStatus(for: HKCorrelationType(.bloodPressure)) == .sharingAuthorized &&
+        healthKitStore.authorizationStatus(for: HKQuantityType(.heartRate)) == .sharingAuthorized
     }
     
     func authorizationRequestHealthKit(completion: @escaping (Bool, Error?) -> Void) {
@@ -32,35 +30,46 @@ class HealthKitManager {
             return
         }
         // 2
-        let types: Set<HKSampleType> = [systolicType, diastolicType, heartRateType]
+        let types: Set<HKSampleType> = [
+            HKQuantityType(.bloodPressureSystolic),
+            HKQuantityType(.bloodPressureDiastolic),
+            HKQuantityType(.heartRate)
+        ]
+        
         // 3
         healthKitStore.requestAuthorization(toShare: types, read: types) { (success: Bool, error: Error?) in
             completion(success, error)
         }
     }
-    
-    func saveBloodPressureMeasurement(date startDate: Date = Date(), systolic: Int, diastolic: Int, heartRate: Int, completion: @escaping (Bool, Error?) -> Void) {
-        // 1
-        let endDate = startDate
-        // 2
-        let systolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!
-        let systolicQuantity = HKQuantity(unit: HKUnit.millimeterOfMercury(), doubleValue: Double(systolic))
-        let systolicSample = HKQuantitySample(type: systolicType, quantity: systolicQuantity, start: startDate, end: endDate)
-        let diastolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!
-        let diastolicQuantity = HKQuantity(unit: HKUnit.millimeterOfMercury(), doubleValue: Double(diastolic))
-        let diastolicSample = HKQuantitySample(type: diastolicType, quantity: diastolicQuantity, start: startDate, end: endDate)
-        // 3
-        let bpCorrelationType = HKCorrelationType.correlationType(forIdentifier: .bloodPressure)!
-        let bpCorrelation = Set(arrayLiteral: systolicSample, diastolicSample)
-        let bloodPressureSample = HKCorrelation(type: bpCorrelationType , start: startDate, end: endDate, objects: bpCorrelation)
-        // 4
-        let beatsCountUnit = HKUnit.count()
-        let heartRateQuantity = HKQuantity(unit: beatsCountUnit.unitDivided(by: HKUnit.minute()), doubleValue: Double(heartRate))
-        let heartRateType = HKQuantityType.quantityType(forIdentifier: .heartRate)!
-        let heartRateSample = HKQuantitySample(type: heartRateType, quantity: heartRateQuantity, start: startDate, end: endDate)
-        // 5
-        healthKitStore.save([bloodPressureSample, heartRateSample]) { (success: Bool, error: Error?) in
-            completion(success, error)
+
+    func save(systolic: Int, diastolic: Int, heartRate: Int, date: Date = .now, completion: ((_ success: Bool, _ error: Error?) -> Void)? = nil) {
+        
+        // Check authorization status
+        
+        guard isSharingAuthorizedForAllSamples() else {
+            completion?(false, HKShareError.sharingNotAuthorisedForAllSamples)
+            return
+        }
+        
+        // Blood Pressure
+        
+        let bloodPressureCorrelation = HKCorrelation.bloodPressure(
+            systolic: Double(systolic),
+            diastolic: Double(diastolic),
+            date: date
+        )
+        
+        // Heart Rate
+        
+        let heartRateSample = HKQuantitySample.heartRate(
+            bpm: Double(heartRate),
+            date: date
+        )
+        
+        // Save to Health
+        
+        healthKitStore.save([bloodPressureCorrelation, heartRateSample]) { (success: Bool, error: Error?) in
+            completion?(success, error)
         }
     }
     
@@ -122,5 +131,47 @@ class HealthKitManager {
             print(samples)
         }
         self.healthKitStore.execute(sampleQuery)
+    }
+}
+
+extension HKCorrelation {
+    
+    /// Initialiser for blood pressure correlation where start and end times are the same
+    class func bloodPressure(systolic: Double, diastolic: Double, date: Date) -> HKCorrelation{
+        
+        let systolicSample = HKQuantitySample(
+            type: HKQuantityType(.bloodPressureSystolic),
+            quantity: HKQuantity(unit: .millimeterOfMercury(), doubleValue: Double(systolic)),
+            start: date,
+            end: date
+        )
+        
+        let diastolicSample = HKQuantitySample(
+            type: HKQuantityType(.bloodPressureDiastolic),
+            quantity: HKQuantity(unit: .millimeterOfMercury(), doubleValue: Double(diastolic)),
+            start: date,
+            end: date
+        )
+        
+        return HKCorrelation(
+            type: HKCorrelationType(.bloodPressure),
+            start: date,
+            end: date,
+            objects: [systolicSample, diastolicSample]
+        )
+    }
+}
+
+extension HKQuantitySample {
+    
+    /// Heart Rate with matching start and end date
+    class func heartRate(bpm: Double, date: Date) -> HKQuantitySample {
+        
+        return HKQuantitySample(
+            type: HKQuantityType(.heartRate),
+            quantity: HKQuantity(unit: .count().unitDivided(by: .minute()), doubleValue: Double(bpm)),
+            start: date,
+            end: date
+        )
     }
 }
