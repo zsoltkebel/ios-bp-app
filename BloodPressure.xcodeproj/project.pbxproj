@@ -14,6 +14,8 @@
 		AF163CEE2B82787500A4CD72 /* TimeOfDayListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF163CED2B82787500A4CD72 /* TimeOfDayListItem.swift */; };
 		AF163CF02B827A2B00A4CD72 /* UpdateTimeOfDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF163CEF2B827A2B00A4CD72 /* UpdateTimeOfDayView.swift */; };
 		AF163CF22B82C3AC00A4CD72 /* PreviewSampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF163CF12B82C3AC00A4CD72 /* PreviewSampleData.swift */; };
+		AF4A3C6C2BC44DE10068E2DF /* AddDataIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4A3C6B2BC44DE10068E2DF /* AddDataIntent.swift */; };
+		AF4A3C6E2BC44E080068E2DF /* BloodPressureShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF4A3C6D2BC44E080068E2DF /* BloodPressureShortcuts.swift */; };
 		AF6B3C482B74847A00347CF7 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6B3C472B74847A00347CF7 /* HealthKitManager.swift */; };
 		AF6B3C4A2B748C1F00347CF7 /* AddData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6B3C492B748C1F00347CF7 /* AddData.swift */; };
 		AF6B3C4D2B74955F00347CF7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = AF6B3C4C2B74955E00347CF7 /* .gitignore */; };
@@ -36,6 +38,8 @@
 		AF163CED2B82787500A4CD72 /* TimeOfDayListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayListItem.swift; sourceTree = "<group>"; };
 		AF163CEF2B827A2B00A4CD72 /* UpdateTimeOfDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateTimeOfDayView.swift; sourceTree = "<group>"; };
 		AF163CF12B82C3AC00A4CD72 /* PreviewSampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewSampleData.swift; sourceTree = "<group>"; };
+		AF4A3C6B2BC44DE10068E2DF /* AddDataIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDataIntent.swift; sourceTree = "<group>"; };
+		AF4A3C6D2BC44E080068E2DF /* BloodPressureShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BloodPressureShortcuts.swift; sourceTree = "<group>"; };
 		AF6B3C472B74847A00347CF7 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		AF6B3C492B748C1F00347CF7 /* AddData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddData.swift; sourceTree = "<group>"; };
 		AF6B3C4B2B7491A600347CF7 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -84,6 +88,15 @@
 			path = SwiftData;
 			sourceTree = "<group>";
 		};
+		AF4A3C6A2BC44DD60068E2DF /* App Intents */ = {
+			isa = PBXGroup;
+			children = (
+				AF4A3C6B2BC44DE10068E2DF /* AddDataIntent.swift */,
+				AF4A3C6D2BC44E080068E2DF /* BloodPressureShortcuts.swift */,
+			);
+			path = "App Intents";
+			sourceTree = "<group>";
+		};
 		AF8091262B932C0100F49492 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +127,7 @@
 		AF99E5D72B62562400B30ABE /* BloodPressure */ = {
 			isa = PBXGroup;
 			children = (
+				AF4A3C6A2BC44DD60068E2DF /* App Intents */,
 				AF8091262B932C0100F49492 /* Extensions */,
 				AFC2B5972B8D2A19000A3FF5 /* Model */,
 				AF163CEC2B82767F00A4CD72 /* SwiftData */,
@@ -228,11 +242,13 @@
 				AF163CEE2B82787500A4CD72 /* TimeOfDayListItem.swift in Sources */,
 				AF163CD62B81031000A4CD72 /* TimeItemContainer.swift in Sources */,
 				AF6B3C6A2B79664000347CF7 /* Reading.swift in Sources */,
+				AF4A3C6C2BC44DE10068E2DF /* AddDataIntent.swift in Sources */,
 				AF99E5D92B62562400B30ABE /* BloodPressureApp.swift in Sources */,
 				AFC2B5922B8A572E000A3FF5 /* ReadingListItem.swift in Sources */,
 				AFC2B58A2B89FD84000A3FF5 /* DaySummaryView.swift in Sources */,
 				AF15DD232B802EED009BE817 /* SettingsView.swift in Sources */,
 				AF6B3C4A2B748C1F00347CF7 /* AddData.swift in Sources */,
+				AF4A3C6E2BC44E080068E2DF /* BloodPressureShortcuts.swift in Sources */,
 				AF6B3C482B74847A00347CF7 /* HealthKitManager.swift in Sources */,
 				AF163CD22B80C55D00A4CD72 /* PartOfDay.swift in Sources */,
 				AFC2B58E2B8A1389000A3FF5 /* Brain.swift in Sources */,
